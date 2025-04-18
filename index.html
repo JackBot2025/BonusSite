@@ -25,27 +25,39 @@
   </style>
 </head>
 <body>
-  <meta name="6c778dfc7f5ccb4bc8799407959f5d78fc0001f7" content="6c778dfc7f5ccb4bc8799407959f5d78fc0001f7" />
   <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:100%; height:100%; overflow:hidden; background-color: transparent;'></iframe>
   <h1>📺 Werbung ansehen</h1>
   <p>Bitte lasse diese Seite für 30 Sekunden geöffnet, um dein Bonusbild zu erhalten.</p>
   <div style="margin: 20px auto; width: 80%; height: 900px; border: 1px solid #ccc;">
-  <iframe src="https://tinyurl.com/System-50Euro" width="100%" height="100%" frameborder="0"></iframe>
-</div>
-
+    <iframe id="randomWebsite" width="100%" height="100%" frameborder="0"></iframe>
+  </div>
   <div id="timer">30</div>
   <div id="message">⏳ Bitte warten...</div>
   <button id="button" onclick="claimReward()">✅ Bonusbild freischalten</button>
-
   <script>
+    // Liste der 10 möglichen Websites
+    const websites = [
+      "https://tinyurl.com/System-50Euro",
+      "https://de.gamsgo.com/partner/zjjZzVEE",
+      "https://tinyurl.com/Libertatem-500Bonus",
+      "https://tinyurl.com/4rfhubtn",
+      "https://polpick.io/?ref=Libertatem",
+      "https://tinyurl.com/5n768bsw",
+      "https://tinyurl.com/34ar9be9"
+    ];
+    
+    // Zufällige Website aus der Liste auswählen
+    const randomWebsite = websites[Math.floor(Math.random() * websites.length)];
+    
+    // Die zufällige Website im iframe anzeigen
+    document.getElementById('randomWebsite').src = randomWebsite;
+    
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get("userid");
-
     let seconds = 30;
     const timerDisplay = document.getElementById("timer");
     const message = document.getElementById("message");
     const button = document.getElementById("button");
-
     const countdown = setInterval(() => {
       seconds--;
       timerDisplay.innerText = seconds;
@@ -55,7 +67,6 @@
         button.style.display = "inline-block";
       }
     }, 1000);
-
     function claimReward() {
       fetch(`https://picturebot-bwgn.onrender.com/reward?userid=${userId}`)
         .then(() => {
