@@ -15,12 +15,9 @@
       color: var(--tg-theme-text-color);
       background-color: var(--tg-theme-bg-color);
     }
-    #timer {
-      font-size: 48px;
-      margin: 30px 0;
-    }
     #message {
-      margin-top: 20px;
+      margin: 30px 0;
+      font-size: 18px;
     }
     .button {
       background-color: var(--tg-theme-button-color);
@@ -31,66 +28,79 @@
       border-radius: 4px;
       margin-top: 20px;
       cursor: pointer;
+    }
+    .loading {
       display: none;
+      margin: 20px auto;
     }
   </style>
 </head>
 <body>
   <h1>📺 Werbung ansehen</h1>
-  <p>Bitte schaue dir die Werbung für 30 Sekunden an, um dein Bonusbild freizuschalten.</p>
+  <p>Sieh dir eine kurze Werbung an, um dein Bonusbild freizuschalten.</p>
   
-  <div id="ad-container">
-    <!-- Die Werbeanzeigen werden automatisch von Monetag eingefügt -->
-  </div>
-
-  <div id="timer">30</div>
-  <div id="message">⏳ Bitte warten...</div>
-  <button id="claim-button" class="button" onclick="claimReward()">✅ Bonusbild freischalten</button>
+  <div id="message">Klicke auf den Button, um mit der Werbung zu beginnen</div>
+  <button id="ad-button" class="button" onclick="showAd()">🎬 Werbung starten</button>
+  <div id="loading" class="loading">⏳ Werbung wird geladen...</div>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();  // App auf volle Höhe expandieren
     
-    let seconds = 30;
-    const timerDisplay = document.getElementById("timer");
     const message = document.getElementById("message");
-    const button = document.getElementById("claim-button");
+    const adButton = document.getElementById("ad-button");
+    const loading = document.getElementById("loading");
     
-    // Timer starten
-    const countdown = setInterval(() => {
-      seconds--;
-      timerDisplay.innerText = seconds;
-      if (seconds <= 0) {
-        clearInterval(countdown);
-        message.innerText = "✅ Du kannst jetzt dein Bonusbild freischalten.";
-        button.style.display = "inline-block";
-      }
-    }, 1000);
-
-
-    function claimReward() {
-      // Prüfen, ob der Timer abgelaufen ist
-      if (seconds > 0) {
-        alert("Bitte warte bis der Timer abgelaufen ist!");
-        return;
-      }
-  
-      // Monetag Werbeanzeige aufrufen
+    // URL-Parameter auslesen (userid)
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      const results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    
+    // Funktion zum Anzeigen der Werbung
+    function showAd() {
+      adButton.style.display = "none";
+      loading.style.display = "block";
+      message.innerText = "⏳ Werbung wird geladen...";
+      
+      // Monetag Rewarded Ad anzeigen
       show_9347841().then(() => {
-        // Dieser Code wird ausgeführt, nachdem der Nutzer die Werbung angesehen hat
-    
-        // Daten an den Bot zurücksenden
-        tg.sendData("bonus_claimed");
-    
-        // Feedback für den Nutzer
-        message.innerText = "✅ Bonus wurde aktiviert!";
-        button.disabled = true;
-    
-        // Mini-App schließen
-        setTimeout(() => tg.close(), 1500);
+        // Nach erfolgreicher Werbung
+        message.innerText = "✅ Danke fürs Anschauen! Dein Bonus wird freigeschaltet...";
+        
+        // Nutzer-ID aus URL-Parameter holen
+        const userId = getUrlParameter('userid');
+        
+        if (userId) {
+          // Callback-URL zum Bot aufrufen (Bonus freischalten)
+          fetch(`https://picturebot-bwgn.onrender.com/reward?userid=${userId}`)
+            .then(response => {
+              if (response.ok) {
+                message.innerText = "✅ Bonus erfolgreich freigeschaltet!";
+                setTimeout(() => tg.close(), 1500);
+              } else {
+                message.innerText = "⚠️ Es gab ein Problem. Bitte versuche es erneut.";
+                adButton.style.display = "inline-block";
+                loading.style.display = "none";
+              }
+            })
+            .catch(error => {
+              message.innerText = "⚠️ Verbindungsfehler. Bitte versuche es erneut.";
+              adButton.style.display = "inline-block";
+              loading.style.display = "none";
+            });
+        } else {
+          message.innerText = "⚠️ Keine User-ID gefunden.";
+          adButton.style.display = "inline-block";
+          loading.style.display = "none";
+        }
       }).catch(e => {
-        // Fehlerbehandlung, falls die Werbung nicht abgeschlossen wird
+        // Fehlerbehandlung
         message.innerText = "⚠️ Es gab ein Problem mit der Werbung. Bitte versuche es erneut.";
+        adButton.style.display = "inline-block";
+        loading.style.display = "none";
       });
     }
   </script>
