@@ -36,6 +36,7 @@
   </style>
 </head>
 <body>
+  <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:100%; height:100%; overflow:hidden; background-color: transparent;'></iframe>
   <h1>📺 Werbung ansehen</h1>
   <p>Sieh dir eine kurze Werbung an, um dein Bonusbild freizuschalten.</p>
   
@@ -78,31 +79,36 @@
           fetch(`https://picturebot-bwgn.onrender.com/reward?userid=${userId}`)
             .then(response => {
               if (response.ok) {
-                message.innerText = "✅ Bonus erfolgreich freigeschaltet!";
+                message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen.";
                 setTimeout(() => tg.close(), 1500);
               } else {
-                message.innerText = "⚠️ Es gab ein Problem. Bitte versuche es erneut.";
+                message.innerText = "⚠️ Es gab ein Problem. Bitte Fenster schließen und versuche es erneut.";
                 adButton.style.display = "inline-block";
                 loading.style.display = "none";
               }
             })
             .catch(error => {
-              message.innerText = "⚠️ Verbindungsfehler. Bitte versuche es erneut.";
+              message.innerText = "⚠️ Verbindungsfehler. Bitte Fenster schließen und versuche es erneut.";
               adButton.style.display = "inline-block";
               loading.style.display = "none";
             });
         } else {
-          message.innerText = "⚠️ Keine User-ID gefunden.";
+          message.innerText = "⚠️ Keine User-ID gefunden. Bitte Fenster schließen und versuche es erneut.";
           adButton.style.display = "inline-block";
           loading.style.display = "none";
         }
       }).catch(e => {
         // Fehlerbehandlung
-        message.innerText = "⚠️ Es gab ein Problem mit der Werbung. Bitte versuche es erneut.";
+        message.innerText = "⚠️ Es gab ein Problem mit der Werbung. Bitte Fenster schließen und versuche es erneut.";
         adButton.style.display = "inline-block";
         loading.style.display = "none";
       });
     }
   </script>
+  <div id="adklick-container">
+    <!-- BEGIN ADKLICK MULTIAD CODE -->
+    <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=654dd556a17b65d8af5d75f8f6f3e1b4&amp;site=57785&amp;catid=24&amp;auswahl=2&amp;width=234&amp;height=60" type="text/javascript"></script>
+    <!-- END ADKLICK MULTIAD CODE -->
+  </div>
 </body>
 </html>
