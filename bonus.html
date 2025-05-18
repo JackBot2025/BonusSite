@@ -66,17 +66,32 @@
         button.style.display = "inline-block";
       }
     }, 1000);
-    
+
+
     function claimReward() {
-      // Daten an den Bot zurücksenden
-      tg.sendData("bonus_claimed");
-      
-      // Feedback für den Nutzer
-      message.innerText = "✅ Bonus wurde aktiviert!";
-      button.disabled = true;
-      
-      // Mini-App schließen
-      setTimeout(() => tg.close(), 1500);
+      // Prüfen, ob der Timer abgelaufen ist
+      if (seconds > 0) {
+        alert("Bitte warte bis der Timer abgelaufen ist!");
+        return;
+      }
+  
+      // Monetag Werbeanzeige aufrufen
+      show_9347841().then(() => {
+        // Dieser Code wird ausgeführt, nachdem der Nutzer die Werbung angesehen hat
+    
+        // Daten an den Bot zurücksenden
+        tg.sendData("bonus_claimed");
+    
+        // Feedback für den Nutzer
+        message.innerText = "✅ Bonus wurde aktiviert!";
+        button.disabled = true;
+    
+        // Mini-App schließen
+        setTimeout(() => tg.close(), 1500);
+      }).catch(e => {
+        // Fehlerbehandlung, falls die Werbung nicht abgeschlossen wird
+        message.innerText = "⚠️ Es gab ein Problem mit der Werbung. Bitte versuche es erneut.";
+      });
     }
   </script>
 </body>
