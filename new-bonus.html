@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bonus freischalten</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Monetag Integration -->
+  <script src='//solseewuthi.net/sdk.js' data-zone='9347841' data-sdk='show_9347841'></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      color: var(--tg-theme-text-color, #222);
+      background-color: var(--tg-theme-bg-color, #fff);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      flex: 1;
+    }
+    
+    h1 {
+      color: var(--tg-theme-button-color, #3390ec);
+      margin-bottom: 10px;
+    }
+    
+    #message {
+      margin: 20px 0;
+      font-size: 18px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+    }
+    
+    .button {
+      background-color: var(--tg-theme-button-color, #3390ec);
+      color: var(--tg-theme-button-text-color, #fff);
+      border: none;
+      padding: 15px 25px;
+      font-size: 18px;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+    }
+    
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    #loading {
+      display: none;
+      margin: 20px auto;
+    }
+    
+    /* Glücksrad Styles */
+    #wheel-container {
+      display: none;
+      margin: 30px auto;
+      position: relative;
+      width: 250px;
+      height: 250px;
+    }
+    
+    #wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+      transition: transform 3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+      transform: rotate(0deg);
+      box-shadow: 0 0 0 5px #333, 0 0 0 10px #f5f5f5;
+    }
+    
+    .wheel-section {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(50% 50%, 0% 0%, 100% 0%);
+      transform-origin: bottom;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 20px;
+      box-sizing: border-box;
+      color: white;
+      font-weight: bold;
+      font-size: 24px;
+    }
+    
+    #pointer {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 30px;
+      background: #ff4c4c;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      z-index: 2;
+    }
+    
+    #result {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      min-height: 30px;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .progress-container {
+      margin-top: 20px;
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      height: 15px;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      border-radius: 10px;
+      background-color: var(--tg-theme-button-color, #3390ec);
+      width: 0;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎁 Bonus-Bilder freischalten</h1>
+    <p>Sieh dir eine kurze Werbung an und drehe am Glücksrad, um 1-3 zusätzliche Bilder zu gewinnen!</p>
+    
+    <div id="message">Klicke auf den Button, um deine Bonus-Bilder zu erhalten</div>
+    
+    <button id="ad-button" class="button" onclick="showAd()">🎬 Werbung anschauen & Bonus erhalten</button>
+    
+    <div id="loading" class="loading">
+      <p>⏳ Werbung wird geladen...</p>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+    </div>
+
+    <!-- Glücksrad -->
+    <div id="wheel-container">
+      <div id="pointer"></div>
+      <div id="wheel"></div>
+      <div id="result"></div>
+      <button id="spin-button" class="button" onclick="spinWheel()">🎡 Glücksrad drehen</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();  // App auf volle Höhe expandieren
+    
+    const message = document.getElementById("message");
+    const adButton = document.getElementById("ad-button");
+    const loading = document.getElementById("loading");
+    const wheelContainer = document.getElementById("wheel-container");
+    const wheel = document.getElementById("wheel");
+    const result = document.getElementById("result");
+    const spinButton = document.getElementById("spin-button");
+    const progressBar = document.getElementById("progress");
+    
+    // Glücksrad Optionen
+    const sections = [
+      { text: "1", color: "#FF5252", value: 1 },
+      { text: "2", color: "#448AFF", value: 2 },
+      { text: "1", color: "#4CAF50", value: 1 },
+      { text: "3", color: "#FFC107", value: 3 },
+      { text: "1", color: "#9C27B0", value: 1 },
+      { text: "2", color: "#FF9800", value: 2 }
+    ];
+    
+    // Glücksrad erstellen
+    function createWheel() {
+      const sectionAngle = 360 / sections.length;
+      
+      sections.forEach((section, index) => {
+        const sectionElement = document.createElement("div");
+        sectionElement.className = "wheel-section";
+        sectionElement.style.backgroundColor = section.color;
+        sectionElement.style.transform = `rotate(${index * sectionAngle}deg)`;
+        
+        const textElement = document.createElement("span");
+        textElement.textContent = section.text;
+        textElement.style.transform = `rotate(${90 - sectionAngle/2}deg)`;
+        
+        sectionElement.appendChild(textElement);
+        wheel.appendChild(sectionElement);
+      });
+    }
+    
+    // URL-Parameter auslesen (userid)
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      const results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    
+    // Simuliere Ladefortschritt
+    function simulateProgress() {
+      let width = 0;
+      const interval = setInterval(() => {
+        if (width >= 90) {
+          clearInterval(interval);
+        } else {
+          width += 5;
+          progressBar.style.width = width + "%";
+        }
+      }, 200);
+    }
+    
+    // Funktion zum Anzeigen der Werbung
+    function showAd() {
+      adButton.classList.add("hidden");
+      loading.style.display = "block";
+      message.innerText = "⏳ Werbung wird geladen...";
+      simulateProgress();
+      
+      // Log Klick an Server senden (optional)
+      const userId = getUrlParameter('userid');
+      if (userId) {
+        fetch(`https://picturebot-bwgn.onrender.com/log_bonus_click?userid=${userId}`)
+          .catch(error => console.error("Logging error:", error));
+      }
+      
+      // Monetag Rewarded Ad anzeigen
+      show_9347841().then(() => {
+        // Nach erfolgreicher Werbung
+        loading.style.display = "none";
+        message.innerText = "✅ Danke fürs Anschauen! Drehe jetzt am Glücksrad!";
+        
+        // Glücksrad anzeigen
+        createWheel();
+        wheelContainer.style.display = "block";
+        
+      }).catch(e => {
+        // Fehlerbehandlung
+        message.innerText = "⚠️ Es gab ein Problem mit der Werbung. Bitte versuche es erneut.";
+        adButton.classList.remove("hidden");
+        loading.style.display = "none";
+      });
+    }
+    
+    // Funktion zum Drehen des Glücksrads
+    function spinWheel() {
+      // Button deaktivieren während des Drehens
+      spinButton.disabled = true;
+      
+      // Zufälligen Gewinn auswählen
+      const sectionIndex = Math.floor(Math.random() * sections.length);
+      const bonusAmount = sections[sectionIndex].value;
+      
+      // Berechnungswinkel basierend auf der Anzahl der Sektionen
+      const sectionAngle = 360 / sections.length;
+      
+      // Berechnung des Enddrehwinkels
+      // 5 volle Umdrehungen + Winkel zum gewählten Sektor
+      const rotationAngle = 1800 + (sectionIndex * sectionAngle);
+      
+      // Animation starten
+      wheel.style.transform = `rotate(${rotationAngle}deg)`;
+      
+      // Nach der Animation das Ergebnis anzeigen
+      setTimeout(() => {
+        result.innerText = `Du hast ${bonusAmount} Bonus-Bild${bonusAmount !== 1 ? 'er' : ''} gewonnen! 🎉`;
+        
+        // Nutzer-ID aus URL-Parameter holen
+        const userId = getUrlParameter('userid');
+        
+        if (userId) {
+          // Callback-URL zum Bot aufrufen (Bonus freischalten mit der Anzahl)
+          fetch(`https://picturebot-bwgn.onrender.com/reward?userid=${userId}&bonus=${bonusAmount}`)
+            .then(response => {
+              if (response.ok) {
+                setTimeout(() => {
+                  message.innerText = `✅ ${bonusAmount} Bonus-Bild${bonusAmount !== 1 ? 'er' : ''} wurden deinem Konto gutgeschrieben!`;
+                  spinButton.innerText = "🔄 Fenster schließen";
+                  spinButton.disabled = false;
+                  spinButton.onclick = () => tg.close();
+                }, 1500);
+              } else {
+                message.innerText = "⚠️ Es gab ein Problem. Bitte versuche es erneut.";
+                spinButton.disabled = false;
+              }
+            })
+            .catch(error => {
+              message.innerText = "⚠️ Verbindungsfehler. Bitte versuche es erneut.";
+              spinButton.disabled = false;
+            });
+        } else {
+          message.innerText = "⚠️ Keine User-ID gefunden. Bitte versuche es erneut.";
+          spinButton.disabled = false;
+        }
+      }, 3000);
+    }
+    
+    // Analytics tracken (optional)
+    function trackPageView() {
+      const userId = getUrlParameter('userid');
+      const source = getUrlParameter('source') || 'direct';
+      
+      if (userId) {
+        fetch(`https://picturebot-bwgn.onrender.com/page_view?userid=${userId}&page=bonus&source=${source}`)
+          .catch(error => console.error("Analytics error:", error));
+      }
+    }
+    
+    // Seite geladen
+    window.addEventListener('load', trackPageView);
+  </script>
+</body>
+</html>
