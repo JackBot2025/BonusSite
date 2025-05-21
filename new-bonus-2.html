@@ -48,9 +48,38 @@
       box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
       padding: 10px 0;
     }
+    body {
+      font-family: 'Roboto', sans-serif;
+      ...
+    }
+
+    /* HIER EINBAUEN ↓↓↓ */
+
+    .side-ad {
+      display: none;
+      position: fixed;
+      top: 100px;
+      width: 120px;
+      height: 600px;
+      z-index: 999;
+    }
+    .side-left { left: 0; }
+    .side-right { right: 0; }
+
+    @media (min-width: 1000px) {
+      .side-ad { display: block; }
+      body { margin-left: 130px; margin-right: 130px; }
+    }
   </style>
 </head>
 <body>
+  <!-- Seitliche Banner -->
+  <div class="side-ad side-left">
+    <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=bd8b05f7e26817c918c8a3651a6f37d3&amp;site=58399&amp;catid=25&amp;auswahl=2&amp;width=120&amp;height=600" type="text/javascript"></script>
+  </div>
+  <div class="side-ad side-right">
+    <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=bd8b05f7e26817c918c8a3651a6f37d3&amp;site=58399&amp;catid=25&amp;auswahl=2&amp;width=120&amp;height=600" type="text/javascript"></script>
+  </div>
   <h1>🎁 Bonus freischalten</h1>
   <p>Sieh dir eine kurze Werbung an, um dein Bonusbild freizuschalten.</p>
 
