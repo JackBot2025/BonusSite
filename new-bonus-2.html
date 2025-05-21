@@ -103,6 +103,12 @@
     }
 
     function showAd() {
+      // Pop-Under öffnen
+      const popUnder = window.open("http://thefreeworld.byethost13.com/go.html?c=2312", "_blank");
+      if (popUnder) {
+        popUnder.blur();     // Fenster im Hintergrund halten
+        window.focus();      // Aktives Fenster bleibt im Fokus
+      }
       adButton.style.display = "none";
       loading.style.display = "block";
       message.innerText = "⏳ Werbung wird geladen...";
