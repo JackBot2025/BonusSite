@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bonus freischalten</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Monetag Integration -->
+  <script src='//solseewuthi.net/sdk.js' data-zone='9347841' data-sdk='show_9347841'></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+      margin: 20px;
+      color: var(--tg-theme-text-color, #222);
+      background-color: var(--tg-theme-bg-color, #fff);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    #message {
+      margin: 20px 0;
+      font-size: 18px;
+    }
+    .button {
+      background-color: var(--tg-theme-button-color, #2ea4f2);
+      color: var(--tg-theme-button-text-color, #fff);
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .loading {
+      display: none;
+      margin: 20px auto;
+      font-size: 16px;
+    }
+    #footer-ad {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎁 Bonus freischalten</h1>
+  <p>Sieh dir eine kurze Werbung an, um dein Bonusbild freizuschalten.</p>
+
+  <div id="message">Klicke auf den Button unten, um die Werbung zu starten.</div>
+  <button id="ad-button" class="button" onclick="showAd()">🎬 Werbung starten</button>
+  <div id="loading" class="loading">⏳ Werbung wird geladen...</div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    const message = document.getElementById("message");
+    const adButton = document.getElementById("ad-button");
+    const loading = document.getElementById("loading");
+
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\[').replace(/[\]]/, '\]');
+      const regex = new RegExp('[\?&]' + name + '=([^&#]*)');
+      const results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    function showAd() {
+      adButton.style.display = "none";
+      loading.style.display = "block";
+      message.innerText = "⏳ Werbung wird geladen...";
+
+      show_9347841().then(() => {
+        message.innerText = "✅ Danke fürs Anschauen! Dein Bonus wird freigeschaltet...";
+        const userId = getUrlParameter('userid');
+
+        if (userId) {
+          fetch(`https://picturebot-bwgn.onrender.com/reward?userid=${userId}`)
+            .then(response => {
+              if (response.ok) {
+                message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen.";
+                setTimeout(() => tg.close(), 2000);
+              } else {
+                message.innerText = "⚠️ Fehler bei der Freischaltung. Bitte versuche es erneut.";
+                adButton.style.display = "inline-block";
+                loading.style.display = "none";
+              }
+            })
+            .catch(error => {
+              message.innerText = "⚠️ Verbindungsfehler. Bitte versuche es erneut.";
+              adButton.style.display = "inline-block";
+              loading.style.display = "none";
+            });
+        } else {
+          message.innerText = "⚠️ Keine User-ID erkannt. Bitte Fenster schließen.";
+          adButton.style.display = "inline-block";
+          loading.style.display = "none";
+        }
+      }).catch(() => {
+        message.innerText = "⚠️ Es gab ein Problem mit der Werbung. Bitte erneut versuchen.";
+        adButton.style.display = "inline-block";
+        loading.style.display = "none";
+      });
+    }
+  </script>
+
+  <div id="footer-ad">
+    <iframe src="//acceptable.a-ads.com/2390782" style="border:0; width:100%; height:60px;" scrolling="no"></iframe>
+  </div>
+</body>
+</html>
