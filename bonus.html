@@ -1,21 +1,4 @@
-#left-banner {
-      position: fixed;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 1000;
-    }
-    @media (max-width: 768px) {
-      #left-banner {
-        left: 5px;
-        top: 30%;
-        transform: translateY(-50%) scale(0.7);
-        transform-origin: left center;
-      }
-      body {
-        padding-left: 10px;
-      }
-    }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -76,28 +59,10 @@
       display: none;
       margin: 20px auto;
     }
-    #left-banner {
-      position: fixed;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 1000;
-    }
-    @media (max-width: 768px) {
-      #left-banner {
-        left: 5px;
-        top: 30%;
-        transform: translateY(-50%) scale(0.7);
-        transform-origin: left center;
-      }
-      body {
-        padding-left: 10px;
-      }
-    }
   </style>
 </head>
 <body>
-  <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:100%; height:100%; overflow:hidden; background-color: transparent;'></iframe>
+  <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:320px; height:50px; overflow:hidden; background-color: transparent;'></iframe>
   
 
   
@@ -166,7 +131,7 @@
             .then(response => {
               if (response.ok) {
                 message.innerText = "";
-                showStatusButton("✅ Bonus erfolgreich freigeschaltet! Fenster schließen!", true);
+                showStatusButton("✅ Bonus erfolgreich freigeschaltet!", true);
                 setTimeout(() => tg.close(), 2000);
               } else {
                 message.innerText = "";
@@ -175,7 +140,7 @@
             })
             .catch(error => {
               message.innerText = "";
-              showStatusButton("✅ Bonus erfolgreich freigeschaltet! Fenster schließen! ⚠️", false);
+              showStatusButton("✅ Bonus erfolgreich freigeschaltet! ⚠️ Fenster jetzt schließen", false);
             });
         } else {
           message.innerText = "";
