@@ -14,29 +14,62 @@
       margin: 20px;
       color: var(--tg-theme-text-color);
       background-color: var(--tg-theme-bg-color);
+      position: relative;
     }
     #message {
       margin: 30px 0;
       font-size: 18px;
     }
     .button {
-      background-color: var(--tg-theme-button-color);
-      color: var(--tg-theme-button-text-color);
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 4px;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      border: 2px solid #0056b3;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
       margin-top: 20px;
       cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .button:hover {
+      background: linear-gradient(135deg, #0056b3, #004085);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+      transform: translateY(-2px);
     }
     .loading {
       display: none;
       margin: 20px auto;
     }
+    #left-banner {
+      position: fixed;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+    }
+    @media (max-width: 768px) {
+      #left-banner {
+        position: static;
+        transform: none;
+        margin: 20px auto;
+      }
+    }
   </style>
 </head>
 <body>
   <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:100%; height:100%; overflow:hidden; background-color: transparent;'></iframe>
+  
+  <!-- Neuer Banner auf der linken Seite -->
+  <div id="left-banner">
+    <!-- BEGIN ADKLICK MULTIAD CODE -->
+    <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=6124ff9edd965ea79c13c1e0fb55050f&amp;site=57785&amp;catid=24&amp;auswahl=2&amp;width=468&amp;height=60" type="text/javascript"></script>
+    <!-- END ADKLICK MULTIAD CODE -->
+  </div>
+  
   <h1>📺 Werbung ansehen</h1>
   <p>Sieh dir eine kurze Werbung an, um dein Bonusbild freizuschalten.</p>
   
@@ -105,10 +138,5 @@
       });
     }
   </script>
-  <div id="adklick-container">
-    <!-- BEGIN ADKLICK MULTIAD CODE -->
-    <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=654dd556a17b65d8af5d75f8f6f3e1b4&amp;site=57785&amp;catid=24&amp;auswahl=2&amp;width=234&amp;height=60" type="text/javascript"></script>
-    <!-- END ADKLICK MULTIAD CODE -->
-  </div>
 </body>
 </html>
