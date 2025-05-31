@@ -12,9 +12,9 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
+      padding: 0;
       color: var(--tg-theme-text-color);
       background-color: var(--tg-theme-bg-color);
-      position: relative;
     }
     #message {
       margin: 30px 0;
@@ -40,42 +40,48 @@
       box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
       transform: translateY(-2px);
     }
+    .button-green {
+      background: linear-gradient(135deg, #28a745, #1e7e34);
+      color: white;
+      border: 2px solid #1e7e34;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: default;
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: none;
+    }
     .loading {
       display: none;
       margin: 20px auto;
     }
-    #left-banner {
-      position: fixed;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 1000;
-    }
-    @media (max-width: 768px) {
-      #left-banner {
-        position: static;
-        transform: none;
-        margin: 20px auto;
-      }
+    .ad-banner {
+      margin-top: 30px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:100%; height:100%; overflow:hidden; background-color: transparent;'></iframe>
-  
-  <!-- Neuer Banner auf der linken Seite -->
-  <div id="left-banner">
-    <!-- BEGIN ADKLICK MULTIAD CODE -->
-    <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=6124ff9edd965ea79c13c1e0fb55050f&amp;site=57785&amp;catid=24&amp;auswahl=2&amp;width=468&amp;height=60" type="text/javascript"></script>
-    <!-- END ADKLICK MULTIAD CODE -->
-  </div>
+  <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:320px; height:50px; overflow:hidden; background-color: transparent;'></iframe>
   
   <h1>📺 Werbung ansehen</h1>
   <p>Sieh dir eine kurze Werbung an, um dein Bonusbild freizuschalten.</p>
   
   <div id="message">Klicke auf den Button "🎬 Werbung starten", um mit der Werbung zu beginnen</div>
   <button id="ad-button" class="button" onclick="showAd()">🎬 Werbung starten</button>
+  <button id="status-button" class="button-green"></button>
   <div id="loading" class="loading">⏳ Werbung wird geladen...</div>
+  
+  <!-- Adklick Banner unter dem Button -->
+  <div class="ad-banner">
+    <!-- BEGIN ADKLICK MULTIAD CODE -->
+    <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=8bff4207c63530243cf4426a30842677&amp;site=57785&amp;catid=24&amp;auswahl=2&amp;width=468&amp;height=60" type="text/javascript"></script>
+    <!-- END ADKLICK MULTIAD CODE -->
+  </div>
 
   <script>
     const tg = window.Telegram.WebApp;
@@ -83,7 +89,21 @@
     
     const message = document.getElementById("message");
     const adButton = document.getElementById("ad-button");
+    const statusButton = document.getElementById("status-button");
     const loading = document.getElementById("loading");
+    
+    // Funktion zum Anzeigen des Status-Buttons
+    function showStatusButton(text, isSuccess = true) {
+      adButton.style.display = "none";
+      loading.style.display = "none";
+      statusButton.innerText = text;
+      statusButton.style.display = "inline-block";
+      if (!isSuccess) {
+        statusButton.style.background = "linear-gradient(135deg, #dc3545, #c82333)";
+        statusButton.style.borderColor = "#c82333";
+        statusButton.style.boxShadow = "0 4px 15px rgba(220, 53, 69, 0.3)";
+      }
+    }
     
     // URL-Parameter auslesen (userid)
     function getUrlParameter(name) {
@@ -112,29 +132,27 @@
           fetch(`https://picturebot-bwgn.onrender.com/reward?userid=${userId}`)
             .then(response => {
               if (response.ok) {
-                message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen.";
-                setTimeout(() => tg.close(), 1500);
+                message.innerText = "";
+                showStatusButton("✅ Bonus erfolgreich freigeschaltet! Seite kann geschlossen werden!", true);
+                setTimeout(() => tg.close(), 2000);
               } else {
-                message.innerText = "⚠️ Es gab ein Problem. Bitte Fenster schließen und versuche es erneut.";
-                adButton.style.display = "inline-block";
-                loading.style.display = "none";
+                message.innerText = "";
+                showStatusButton("✅ Bonus erfolgreich freigeschaltet! Seite kann geschlossen werden! ⚠️", false);
               }
             })
             .catch(error => {
-              message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen. ⚠️";
-              adButton.style.display = "inline-block";
-              loading.style.display = "none";
+              message.innerText = "";
+              showStatusButton("✅ Bonus erfolgreich freigeschaltet! Seite kann geschlossen werden! ⚠️", false);
             });
         } else {
-          message.innerText = "⚠️ Keine User-ID gefunden. Bitte Fenster schließen und versuche es erneut.";
-          adButton.style.display = "inline-block";
-          loading.style.display = "none";
+          message.innerText = "";
+          showStatusButton("⚠️ Keine User-ID - Erneut versuchen", false);
         }
       }).catch(e => {
         // Fehlerbehandlung
-        message.innerText = "⚠️ Es gab ein Problem mit der Werbung. Bitte Fenster schließen und versuche es erneut.";
-        adButton.style.display = "inline-block";
-        loading.style.display = "none";
+        console.error('Monetag error:', e);
+        message.innerText = "";
+        showStatusButton("⚠️ Werbung-Problem - Erneut versuchen", false);
       });
     }
   </script>
