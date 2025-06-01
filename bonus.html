@@ -20,18 +20,56 @@
       font-size: 18px;
     }
     .button {
-      background-color: var(--tg-theme-button-color);
-      color: var(--tg-theme-button-text-color);
-      border: none;
+      background-color: #007cba;
+      color: white;
+      border: 2px solid #005a8b;
       padding: 12px 20px;
       font-size: 16px;
-      border-radius: 4px;
+      border-radius: 8px;
       margin-top: 20px;
       cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .button:hover {
+      background-color: #005a8b;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
     .loading {
       display: none;
       margin: 20px auto;
+    }
+    .status-button {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 15px 25px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: bold;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      min-width: 250px;
+      text-align: center;
+    }
+    .status-success {
+      background-color: #28a745;
+      color: white;
+      border: 2px solid #1e7e34;
+    }
+    .status-error {
+      background-color: #dc3545;
+      color: white;
+      border: 2px solid #c82333;
+    }
+    .button-container {
+      position: relative;
+      display: inline-block;
     }
   </style>
 </head>
@@ -41,7 +79,12 @@
   <p>Sieh dir eine kurze Werbung an, um dein Bonusbild freizuschalten.</p>
   
   <div id="message">Klicke auf den Button "🎬 Werbung starten", um mit der Werbung zu beginnen</div>
-  <button id="ad-button" class="button" onclick="showAd()">🎬 Werbung starten</button>
+  
+  <div class="button-container">
+    <button id="ad-button" class="button" onclick="showAd()">🎬 Werbung starten</button>
+    <button id="status-button" class="status-button" onclick="closeOrRetry()"></button>
+  </div>
+  
   <div id="loading" class="loading">⏳ Werbung wird geladen...</div>
 
   <script>
@@ -51,6 +94,9 @@
     const message = document.getElementById("message");
     const adButton = document.getElementById("ad-button");
     const loading = document.getElementById("loading");
+    const statusButton = document.getElementById("status-button");
+    
+    let currentStatus = '';
     
     // URL-Parameter auslesen (userid)
     function getUrlParameter(name) {
@@ -60,9 +106,32 @@
       return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
     
+    // Status-Button anzeigen
+    function showStatusButton(text, isSuccess) {
+      statusButton.innerText = text;
+      statusButton.className = 'status-button ' + (isSuccess ? 'status-success' : 'status-error');
+      statusButton.style.display = 'block';
+      currentStatus = isSuccess ? 'success' : 'error';
+    }
+    
+    // Status-Button Click Handler
+    function closeOrRetry() {
+      if (currentStatus === 'success') {
+        tg.close();
+      } else {
+        // Bei Fehler: Button verstecken und zurück zum Anfangszustand
+        statusButton.style.display = 'none';
+        adButton.style.display = 'inline-block';
+        loading.style.display = 'none';
+        message.innerText = "Klicke auf den Button \"🎬 Werbung starten\", um mit der Werbung zu beginnen";
+        currentStatus = '';
+      }
+    }
+    
     // Funktion zum Anzeigen der Werbung
     function showAd() {
       adButton.style.display = "none";
+      statusButton.style.display = "none";
       loading.style.display = "block";
       message.innerText = "⏳ Werbung wird geladen...";
       
@@ -70,6 +139,7 @@
       show_9347841().then(() => {
         // Nach erfolgreicher Werbung
         message.innerText = "✅ Danke fürs Anschauen! Dein Bonus wird freigeschaltet...";
+        loading.style.display = "none";
         
         // Nutzer-ID aus URL-Parameter holen
         const userId = getUrlParameter('userid');
@@ -79,29 +149,26 @@
           fetch(`https://picturebot-bwgn.onrender.com/reward?userid=${userId}`)
             .then(response => {
               if (response.ok) {
-                message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen.";
-                setTimeout(() => tg.close(), 1500);
+                message.innerText = "✅ Bonus erfolgreich freigeschaltet!";
+                showStatusButton("✅ Erfolgreich! Fenster schließen", true);
               } else {
-                message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen. ⚠️";
-                adButton.style.display = "inline-block";
-                loading.style.display = "none";
+                message.innerText = "⚠️ Bonus freigeschaltet, aber Verbindungsfehler";
+                showStatusButton("✅ Fertig! Fenster schließen", true);
               }
             })
             .catch(error => {
-              message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen. ⚠️";
-              adButton.style.display = "inline-block";
-              loading.style.display = "none";
+              message.innerText = "⚠️ Bonus freigeschaltet, aber Verbindungsfehler";
+              showStatusButton("✅ Fertig! Fenster schließen", true);
             });
         } else {
-          message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen. ⚠️";
-          adButton.style.display = "inline-block";
-          loading.style.display = "none";
+          message.innerText = "⚠️ Bonus freigeschaltet, aber Parameter fehlen";
+          showStatusButton("✅ Fertig! Fenster schließen", true);
         }
       }).catch(e => {
         // Fehlerbehandlung
-        message.innerText = "⚠️ Es gab ein Problem mit der Werbung. Bitte Fenster schließen und versuche es erneut.";
-        adButton.style.display = "inline-block";
+        message.innerText = "⚠️ Es gab ein Problem mit der Werbung.";
         loading.style.display = "none";
+        showStatusButton("🔄 Erneut versuchen", false);
       });
     }
   </script>
