@@ -82,18 +82,18 @@
                 message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen.";
                 setTimeout(() => tg.close(), 1500);
               } else {
-                message.innerText = "⚠️ Es gab ein Problem. Bitte Fenster schließen und versuche es erneut.";
+                message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen. ⚠️";
                 adButton.style.display = "inline-block";
                 loading.style.display = "none";
               }
             })
             .catch(error => {
-              message.innerText = "⚠️ Verbindungsfehler. Bitte Fenster schließen und versuche es erneut.";
+              message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen. ⚠️";
               adButton.style.display = "inline-block";
               loading.style.display = "none";
             });
         } else {
-          message.innerText = "⚠️ Keine User-ID gefunden. Bitte Fenster schließen und versuche es erneut.";
+          message.innerText = "✅ Bonus erfolgreich freigeschaltet! Bitte Fenster schließen. ⚠️";
           adButton.style.display = "inline-block";
           loading.style.display = "none";
         }
