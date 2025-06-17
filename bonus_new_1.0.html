@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bonusbild freischalten</title>
+  <title>🎁 Bonus freischalten</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
@@ -14,52 +14,83 @@
       color: #222;
     }
     h1 {
+      font-size: 24px;
       margin-bottom: 10px;
     }
     #timer {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: bold;
       margin: 15px 0;
       color: #e63946;
     }
     .btn {
-      background-color: #007bff;
+      background-color: #e91e63;
       color: white;
       padding: 14px 28px;
-      font-size: 16px;
+      font-size: 18px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       margin: 20px 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     .btn:hover {
-      background-color: #0056b3;
+      background-color: #c2185b;
     }
     .success {
       color: green;
       font-size: 18px;
       margin-top: 20px;
     }
+    .ads {
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
-  <h1>🎁 Bonusbild freischalten</h1>
-  <p>Besuche das exklusive Angebot und warte 30 Sekunden, um dein Bonusbild zu erhalten.</p>
+  <h1 id="headline">💋 Lade exklusive Inhalte...</h1>
+  <p id="subline">🔞 Nur für Erwachsene – öffne das Angebot & warte 30 Sekunden</p>
 
   <div id="timer">⏳ 30</div>
 
   <a href="https://tinyurl.com/24rmtskv" target="_blank">
-    <button class="btn">🔥 Jetzt Angebot öffnen</button>
+    <button class="btn" id="cta-button">🔥 Jetzt Angebot ansehen</button>
   </a>
 
   <div class="success" id="successMsg" style="display:none;">
     ✅ Bonusbild wird freigeschaltet...
   </div>
 
+  <div class="ads">
+    <!-- A-ADS -->
+    <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:100%; height:100px; overflow:hidden; background-color: transparent;'></iframe>
+    
+    <!-- AdKlick -->
+    <div id="adklick-container" style="margin-top: 15px;">
+      <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=654dd556a17b65d8af5d75f8f6f3e1b4&amp;site=57785&amp;catid=24&amp;auswahl=2&amp;width=234&amp;height=60" type="text/javascript"></script>
+    </div>
+  </div>
+
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
+    // Sprache erkennen
+    const userLang = navigator.language || navigator.userLanguage;
+    const isGerman = userLang.startsWith('de');
+
+    // Inhalte setzen
+    if (isGerman) {
+      document.getElementById("headline").innerText = "💋 Entdecke exklusive Telegram-Chats mit echten Frauen!";
+      document.getElementById("subline").innerText = "🔞 Nur für Erwachsene – öffne das Angebot & warte 30 Sekunden";
+      document.getElementById("cta-button").innerText = "🔥 Jetzt Angebot ansehen";
+    } else {
+      document.getElementById("headline").innerText = "💋 Discover exclusive Telegram chats with real women!";
+      document.getElementById("subline").innerText = "🔞 Adults only – open the offer & wait 30 seconds";
+      document.getElementById("cta-button").innerText = "🔥 View Offer Now";
+    }
+
+    // Countdown
     const userId = new URLSearchParams(window.location.search).get("userid") || "";
     const timerElement = document.getElementById("timer");
     const successMsg = document.getElementById("successMsg");
