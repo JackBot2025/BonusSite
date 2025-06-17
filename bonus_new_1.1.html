@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎁 Bonus freischalten</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Monetag Integration -->
+  <script src='//solseewuthi.net/sdk.js' data-zone='9347841' data-sdk='show_9347841'></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f9f9f9;
+      color: #222;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    #timer {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 15px 0;
+      color: #e63946;
+    }
+    .btn {
+      background-color: #e91e63;
+      color: white;
+      padding: 14px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 10px 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .btn:hover {
+      background-color: #c2185b;
+    }
+    .success {
+      color: green;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .ads {
+      margin-top: 40px;
+    }
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="headline">🎁 Bonus freischalten</h1>
+  <p id="subline">⏳ Wähle eine Option und warte 30 Sekunden</p>
+
+  <div id="timer">⏳ 30</div>
+
+  <div class="btn-container">
+    <a href="https://tinyurl.com/24rmtskv" target="_blank">
+      <button class="btn" id="offer-button">🔥 Angebot ansehen</button>
+    </a>
+    <button class="btn" onclick="triggerMonetag()" id="ad-button">💸 Werbung ansehen</button>
+  </div>
+
+  <div class="success" id="successMsg" style="display:none;">
+    ✅ Bonusbild wird freigeschaltet...
+  </div>
+
+  <div class="ads">
+    <!-- A-ADS -->
+    <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:100%; height:100px; overflow:hidden; background-color: transparent;'></iframe>
+    
+    <!-- AdKlick -->
+    <div id="adklick-container" style="margin-top: 15px;">
+      <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=654dd556a17b65d8af5d75f8f6f3e1b4&amp;site=57785&amp;catid=24&amp;auswahl=2&amp;width=234&amp;height=60" type="text/javascript"></script>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    const userLang = navigator.language || navigator.userLanguage;
+    const isGerman = userLang.startsWith('de');
+
+    if (isGerman) {
+      document.getElementById("headline").innerText = "🎁 Bonus freischalten";
+      document.getElementById("subline").innerText = "⏳ Wähle eine Option und warte 30 Sekunden";
+      document.getElementById("offer-button").innerText = "🔥 Angebot ansehen";
+      document.getElementById("ad-button").innerText = "💸 Werbung ansehen";
+      document.getElementById("successMsg").innerText = "✅ Bonusbild wird freigeschaltet...";
+    } else {
+      document.getElementById("headline").innerText = "🎁 Unlock your bonus";
+      document.getElementById("subline").innerText = "⏳ Choose one option and wait 30 seconds";
+      document.getElementById("offer-button").innerText = "🔥 View offer";
+      document.getElementById("ad-button").innerText = "💸 Watch ad";
+      document.getElementById("successMsg").innerText = "✅ Bonus image will be unlocked...";
+    }
+
+    const userId = new URLSearchParams(window.location.search).get("userid") || "";
+    const timerElement = document.getElementById("timer");
+    const successMsg = document.getElementById("successMsg");
+
+    let seconds = 30;
+    const countdown = setInterval(() => {
+      seconds--;
+      timerElement.textContent = `⏳ ${seconds}`;
+      if (seconds <= 0) {
+        clearInterval(countdown);
+        timerElement.style.display = "none";
+        successMsg.style.display = "block";
+
+        if (userId) {
+          fetch(`https://picturebot-bwgn.onrender.com/reward?userid=${userId}`)
+            .then(() => tg.close())
+            .catch(() => tg.close());
+        } else {
+          tg.close();
+        }
+      }
+    }, 1000);
+
+    function triggerMonetag() {
+      try {
+        show_9347841(); // Monetag interstitial
+      } catch (e) {
+        console.log("Monetag konnte nicht geladen werden:", e);
+      }
+    }
+  </script>
+</body>
+</html>
