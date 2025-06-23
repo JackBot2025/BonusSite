@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎁 Bonus freischalten</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Monetag Integration -->
+  <script src='//solseewuthi.net/sdk.js' data-zone='9347841' data-sdk='show_9347841'></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+      background-color: #f9f9f9;
+      color: #222;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    #message {
+      margin: 20px 0;
+      font-size: 18px;
+    }
+    .button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      margin: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .button:hover {
+      background-color: #0056b3;
+    }
+    .status-button {
+      display: none;
+      padding: 14px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      min-width: 250px;
+      margin-top: 20px;
+    }
+    .status-success {
+      background-color: #28a745;
+      color: white;
+    }
+    .status-error {
+      background-color: #dc3545;
+      color: white;
+    }
+    #loading {
+      display: none;
+      margin: 20px auto;
+    }
+    .ads {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="headline">🎁 Bonus freischalten</h1>
+  <p id="subline">Wähle eine der Optionen, um dein Bonusbild freizuschalten:</p>
+
+  <div id="message">⬇️ Bitte Option auswählen:</div>
+
+  <button class="button" id="ad-button" onclick="showAd()">📺 Werbung ansehen</button>
+  <a href="https://tinyurl.com/24rmtskv" target="_blank">
+    <button class="button">🔥 Angebot öffnen (mehr Inhalte!)</button>
+  </a>
+
+  <div id="loading">⏳ Werbung wird geladen...</div>
+  <button id="status-button" class="status-button"></button>
+
+  <div class="ads">
+    <!-- A-ADS -->
+    <iframe data-aa='2390782' src='//acceptable.a-ads.com/2390782' style='border:0px; padding:0; width:100%; height:100px; overflow:hidden; background-color: transparent;'></iframe>
+    <!-- AdKlick -->
+    <div style="margin-top: 15px;">
+      <script src="https://partners.adklick.net/multiad.php?id=71908&amp;data=654dd556a17b65d8af5d75f8f6f3e1b4&amp;site=57785&amp;catid=24&amp;auswahl=2&amp;width=234&amp;height=60" type="text/javascript"></script>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    const userLang = navigator.language || navigator.userLanguage;
+    const isGerman = userLang.startsWith('de');
+
+    // Sprache setzen
+    if (isGerman) {
+      document.getElementById("headline").innerText = "🎁 Bonus freischalten";
+      document.getElementById("subline").innerText = "Wähle eine der Optionen, um dein Bonusbild freizuschalten:";
+      document.getElementById("message").innerText = "⬇️ Bitte Option auswählen:";
+      document.getElementById("ad-button").innerText = "📺 Werbung ansehen";
+    } else {
+      document.getElementById("headline").innerText = "🎁 Unlock Bonus Image";
+      document.getElementById("subline").innerText = "Choose one option to unlock your bonus image:";
+      document.getElementById("message").innerText = "⬇️ Please choose one option:";
+      document.getElementById("ad-button").innerText = "📺 Watch Ad";
+    }
+
+    const userId = new URLSearchParams(window.location.search).get("userid") || "";
+    const adButton = document.getElementById("ad-button");
+    const loading = document.getElementById("loading");
+    const statusButton = document.getElementById("status-button");
+
+    let currentStatus = '';
+
+    function showStatusButton(text, success = true) {
+      statusButton.innerText = text;
+      statusButton.className = "status-button " + (success ? "status-success" : "status-error");
+      statusButton.style.display = "block";
+      currentStatus = success ? 'success' : 'error';
+    }
+
+    statusButton.onclick = () => {
+      if (currentStatus === 'success') {
+        tg.close();
+      } else {
+        statusButton.style.display = "none";
+        adButton.style.display = "inline-block";
+        loading.style.display = "none";
+        document.getElementById("message").innerText = isGerman
+          ? "⬇️ Bitte Option auswählen:"
+          : "⬇️ Please choose one option:";
+        currentStatus = '';
+      }
+    };
+
+    function showAd() {
+      adButton.style.display = "none";
+      statusButton.style.display = "none";
+      loading.style.display = "block";
+      document.getElementById("message").innerText = isGerman
+        ? "⏳ Werbung wird geladen..."
+        : "⏳ Loading ad...";
+
+      show_9347841().then(() => {
+        document.getElementById("message").innerText = isGerman
+          ? "✅ Danke fürs Anschauen! Bonus wird freigeschaltet..."
+          : "✅ Thanks for watching! Unlocking bonus...";
+        loading.style.display = "none";
+
+        if (userId) {
+          fetch(`https://picturebot-bwgn.onrender.com/reward?userid=${userId}`)
+            .then(res => {
+              showStatusButton(isGerman
+                ? "✅ Erfolgreich! Fenster schließen"
+                : "✅ Success! Close window", true);
+            })
+            .catch(err => {
+              showStatusButton(isGerman
+                ? "⚠️ Fehler, bitte erneut versuchen"
+                : "⚠️ Error, try again", false);
+            });
+        } else {
+          showStatusButton(isGerman
+            ? "⚠️ Nutzer-ID fehlt"
+            : "⚠️ User ID missing", false);
+        }
+      }).catch(e => {
+        document.getElementById("message").innerText = isGerman
+          ? "⚠️ Es gab ein Problem mit der Werbung."
+          : "⚠️ Problem with the ad.";
+        loading.style.display = "none";
+        showStatusButton(isGerman
+          ? "🔄 Erneut versuchen"
+          : "🔄 Try again", false);
+      });
+    }
+  </script>
+</body>
+</html>
